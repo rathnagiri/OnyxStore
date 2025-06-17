@@ -16,6 +16,22 @@ namespace OnyxStore.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ProductDto dto)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState
+                    .Where(x => x.Value.Errors.Any())
+                    .Select(x => new
+                    {
+                        Field = x.Key,
+                        Errors = x.Value.Errors.Select(e => e.ErrorMessage)
+                    });
+
+                return BadRequest(new
+                {
+                    Message = "Validation failed",
+                    Details = errors
+                });
+            }
             var product = await service.CreateAsync(dto);
             return Ok(product);
         }

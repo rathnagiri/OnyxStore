@@ -82,4 +82,29 @@ public class WhenProductController
         var okResult = result as OkObjectResult;
         okResult!.Value.ShouldBe(redProducts);
     }
+    
+    [TestMethod]
+    public async Task Create_ShouldReturnBadRequest_WhenModelStateIsInvalid()
+    {
+        var mockService = new Mock<IProductsService>();
+        var controller = new ProductController(mockService.Object);
+
+        controller.ModelState.AddModelError("Name", "The Name field is required.");
+
+        var invalidDto = new ProductDto
+        {
+            // Name is missing or too short (simulate it by not setting it)
+            Color = "Red"
+        };
+
+        var result = await controller.Create(invalidDto);
+
+        // Assert
+        result.ShouldBeOfType<BadRequestObjectResult>();
+        var badRequestResult = result as BadRequestObjectResult;
+
+        badRequestResult.ShouldNotBeNull();
+        badRequestResult.StatusCode.ShouldBe(400);
+        badRequestResult.Value.ToString().ShouldContain("Validation failed");
+    }
 }
