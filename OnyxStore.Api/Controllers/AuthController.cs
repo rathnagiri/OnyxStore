@@ -11,6 +11,9 @@ namespace OnyxStore.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] PostUserDto dto)
         {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
             var result = await authService.RegisterAsync(dto);
             if (result.Status == AuthStatusResult.Success)
                 return Ok(new { Token = result.Token });
@@ -21,6 +24,9 @@ namespace OnyxStore.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserDto dto)
         {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
             var result = await authService.LoginAsync(dto);
             if (result.Status == AuthStatusResult.Success)
                 return Ok(new { Token = result.Token });

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using NuGet.Protocol;
 using OnyxStore.Api.Controllers;
 using OnyxStore.Api.Dtos;
 using OnyxStore.Api.Interfaces;
@@ -26,6 +27,23 @@ public class WhenLogin
             Email = "test@example.com",
             Password = "password123"
         };
+    }
+
+    [TestMethod]
+    public async Task Given_Invalid_Email_ModelState_Error_Then_ReturnBadRequest()
+    {
+        _dto.Email = "abc";
+        _dto.Password = "pas";
+        
+        _controller.ModelState.AddModelError("Email", "The Email field is not a valid e-mail address.");
+        var result = await _controller.Login(_dto);
+        
+        result.ShouldBeOfType<BadRequestObjectResult>();
+
+        var badRequestResult = result as BadRequestObjectResult;
+        badRequestResult.ShouldNotBeNull();
+        badRequestResult.StatusCode.ShouldBe(400);
+        badRequestResult.Value.ToJson().ShouldContain("Email");
     }
     
     [TestMethod]
