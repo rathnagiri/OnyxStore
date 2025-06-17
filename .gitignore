@@ -56,11 +56,13 @@ nunit-*.xml
 # Common IntelliJ Platform excludes
 
 # User specific
+.idea/
 **/.idea/**/workspace.xml
 **/.idea/**/tasks.xml
 **/.idea/shelf/*
 **/.idea/dictionaries
 **/.idea/httpRequests/
+
 
 # Sensitive or high-churn files
 **/.idea/**/dataSources/
